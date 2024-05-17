@@ -1,0 +1,13 @@
+@extends('messenger.layouts.master')
+@section('content')
+
+<section class="wsus__chat_app">
+
+    @include('messenger.layouts.user-list-sidebar')
+
+    @include('messenger.layouts.chat-area')
+
+    @include('messenger.layouts.chat-info-sidebar')
+
+</section>
+@endsection
