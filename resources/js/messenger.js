@@ -95,6 +95,31 @@ function actionOnScroll(selector, callback, topScroll = false) {
 
 /**
  * --------------------------------
+ * Fetch id data of user and update view
+ * --------------------------------
+ */
+
+function IDinfo(id) {
+    $.ajax({
+        method: 'GET',
+        url: '/messenger/id-info',
+        data: {id: id},
+        success: function(response) {
+            $('.messenger-header').find('img').attr('src', response.user.avatar);
+            $('.messenger-header').find('h4').text(response.user.name);
+
+            $('.messenger-info-sidebar .user_photo').find('img').attr('src', response.user.avatar);
+            $('.messenger-info-sidebar').find('.user_name').text(response.user.name);
+            $('.messenger-info-sidebar').find('.user_unique_name').text(response.user.username);
+        },
+        error: function(xhr, status, err) {
+            console.log(err);
+        }
+    })
+}
+
+/**
+ * --------------------------------
  * On Dom Load
  * --------------------------------
  */
@@ -121,6 +146,12 @@ $(document).ready(function() {
     actionOnScroll(".user_search_list_result", function() {
         let value = $('.user_search').val();
         searchUsers(value);
+    })
+
+    // click action on messenger list item
+    $('body').on('click', '.messenger-list-item', function() {
+        const id = $(this).data('id');
+        IDinfo(id);
     })
 
 });

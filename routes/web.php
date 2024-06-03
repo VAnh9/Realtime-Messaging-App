@@ -37,4 +37,7 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('messenger', [MessengerController::class, 'index'])->name('home');
     Route::post('profile', [UserProfileController::class, 'update'])->name('profile.update');
     Route::get('messenger/search-user', [MessengerController::class, 'searchUser'])->name('messenger.search-user');
+
+    // fetch user by id
+    Route::get('messenger/id-info', [MessengerController::class, 'fetchIdInfo'])->name('messenger.id-info');
 });

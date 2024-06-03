@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-use function PHPUnit\Framework\isEmpty;
 
 class MessengerController extends Controller
 {
@@ -34,6 +33,16 @@ class MessengerController extends Controller
         return response()->json([
             'records' => $getRecords,
             'lastPage' => $records->lastPage(),
+        ]);
+    }
+
+    // fetch user by id
+    public function fetchIdInfo(Request $request) {
+
+        $user = User::where('id', $request->id)->first();
+
+        return response()->json([
+            'user' => $user,
         ]);
     }
 }
