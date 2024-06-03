@@ -5,6 +5,14 @@
  * --------------------------------
  */
 
+function enableChatboxOverlay() {
+    $('.wsus__message_paceholder').removeClass('d-none');
+}
+
+function disableChatboxOverlay() {
+    $('.wsus__message_paceholder').addClass('d-none');
+}
+
 function imagePreview(input, selector) {
     if(input.files && input.files[0]) {
         var render = new FileReader();
@@ -104,6 +112,10 @@ function IDinfo(id) {
         method: 'GET',
         url: '/messenger/id-info',
         data: {id: id},
+        beforeSend: function() {
+            NProgress.start();
+            enableChatboxOverlay();
+        },
         success: function(response) {
             $('.messenger-header').find('img').attr('src', response.user.avatar);
             $('.messenger-header').find('h4').text(response.user.name);
@@ -114,6 +126,10 @@ function IDinfo(id) {
         },
         error: function(xhr, status, err) {
             console.log(err);
+        },
+        complete: function() {
+            NProgress.done();
+            disableChatboxOverlay();
         }
     })
 }
