@@ -1,3 +1,18 @@
+/**
+ * --------------------------------
+ * Global Variables
+ * --------------------------------
+ */
+
+var tempMsgId = 0;
+
+const getMessengerId = () => $("meta[name=id]").attr("content");
+const setMessengerId = (id) => $("meta[name=id]").attr("content", id);
+const csrf_token = $("meta[name=csrf_token]").attr("content");
+const msgBoxContainer = $(".wsus__chat_area_body");
+
+const sendMsgForm = $('.send_message_form');
+const messageInput = $('.message_input');
 
 /**
  * --------------------------------
@@ -136,6 +151,60 @@ function IDinfo(id) {
 
 /**
  * --------------------------------
+ * Send Message
+ * --------------------------------
+ */
+
+function sendMessage() {
+    tempMsgId += 1;
+    let tempId = `temp_${tempMsgId}`;
+    const inputValue = messageInput.val();
+
+    if(inputValue.length > 0) {
+        const formData = new FormData($(".send_message_form")[0]);
+        formData.append("id", getMessengerId());
+        formData.append("tempMsgId", tempId);
+        formData.append("_token", csrf_token);
+        $.ajax({
+            method: "POST",
+            url: "/messenger/send-message",
+            data: formData,
+            dataType: "JSON",
+            processData: false,
+            contentType: false,
+            beforeSend: function() {
+                // add temp message on dom
+                msgBoxContainer.append(sendTempMsgCard(inputValue, tempId));
+                sendMsgForm.trigger("reset");
+                $(".emojionearea-editor").text('');
+            },
+            success: function(response) {
+                const tempMsgCardElement = msgBoxContainer.find(`.message-card[data-id=${response.tempId}]`);
+                tempMsgCardElement.before(response.message);
+                tempMsgCardElement.remove();
+            },
+            error: function(xhr, status, err) {
+                console.log(err);
+            }
+        })
+    }
+}
+
+function sendTempMsgCard(message, tempId) {
+    return `
+        <div class="wsus__single_chat_area message-card" data-id="${tempId}">
+            <div class="wsus__single_chat chat_right">
+                <p class="messages">${message}</p>
+                <span class="clock far fa-clock"> Now</span>
+                <a class="action" href="#"><i class="fas fa-trash"></i></a>
+            </div>
+        </div>
+    `
+}
+
+
+/**
+ * --------------------------------
  * On Dom Load
  * --------------------------------
  */
@@ -167,7 +236,14 @@ $(document).ready(function() {
     // click action on messenger list item
     $('body').on('click', '.messenger-list-item', function() {
         const id = $(this).data('id');
+        setMessengerId(id);
         IDinfo(id);
+    })
+
+    // Send Message
+    $('.send_message_form').on('submit', function(e) {
+        e.preventDefault();
+        sendMessage();
     })
 
 });
