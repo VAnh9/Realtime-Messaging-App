@@ -40,6 +40,14 @@ function imagePreview(input, selector) {
     }
 }
 
+// reset message form
+function messageResetForm() {
+    $('.attachement_block').addClass('d-none');
+    sendMsgForm.trigger("reset");
+    $(".emojionearea-editor").text('');
+}
+
+
 let searchPage = 1;
 let noMoreDataSearch = false;
 let searchTempVal = "";
@@ -158,9 +166,10 @@ function IDinfo(id) {
 function sendMessage() {
     tempMsgId += 1;
     let tempId = `temp_${tempMsgId}`;
+    let hasAttachment = !!$('.attachment_input').val();
     const inputValue = messageInput.val();
 
-    if(inputValue.length > 0) {
+    if(inputValue.length > 0 || hasAttachment) {
         const formData = new FormData($(".send_message_form")[0]);
         formData.append("id", getMessengerId());
         formData.append("tempMsgId", tempId);
@@ -174,9 +183,12 @@ function sendMessage() {
             contentType: false,
             beforeSend: function() {
                 // add temp message on dom
-                msgBoxContainer.append(sendTempMsgCard(inputValue, tempId));
-                sendMsgForm.trigger("reset");
-                $(".emojionearea-editor").text('');
+                if(hasAttachment) {
+                    msgBoxContainer.append(sendTempMsgCard(inputValue, tempId, true));
+                } else {
+                    msgBoxContainer.append(sendTempMsgCard(inputValue, tempId));
+                }
+                messageResetForm();
             },
             success: function(response) {
                 const tempMsgCardElement = msgBoxContainer.find(`.message-card[data-id=${response.tempId}]`);
@@ -190,16 +202,35 @@ function sendMessage() {
     }
 }
 
-function sendTempMsgCard(message, tempId) {
-    return `
-        <div class="wsus__single_chat_area message-card" data-id="${tempId}">
-            <div class="wsus__single_chat chat_right">
-                <p class="messages">${message}</p>
-                <span class="clock far fa-clock"> Now</span>
-                <a class="action" href="#"><i class="fas fa-trash"></i></a>
+function sendTempMsgCard(message, tempId, attachement = false) {
+
+    if(attachement) {
+        return `
+                <div class="wsus__single_chat_area message-card" data-id="${tempId}">
+                    <div class="wsus__single_chat chat_right">
+                        <div class="pre_loader">
+                            <div class="spinner-border text-light" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                        ${message.length > 0 ? `<p class="messages">${message}</p>` : ''}
+                        <span class="clock far fa-clock"> Now</span>
+                        <a class="action" href="#"><i class="fas fa-trash"></i></a>
+                    </div>
+                </div>
+                `
+    } else {
+        return `
+            <div class="wsus__single_chat_area message-card" data-id="${tempId}">
+                <div class="wsus__single_chat chat_right">
+                    <p class="messages">${message}</p>
+                    <span class="clock far fa-clock"> Now</span>
+                    <a class="action" href="#"><i class="fas fa-trash"></i></a>
+                </div>
             </div>
-        </div>
-    `
+        `
+    }
+
 }
 
 
@@ -244,6 +275,17 @@ $(document).ready(function() {
     $('.send_message_form').on('submit', function(e) {
         e.preventDefault();
         sendMessage();
+    })
+
+    // send attachment
+    $('.attachment_input').change(function() {
+        imagePreview(this, '.attachment_img_preview');
+        $('.attachement_block').removeClass('d-none');
+    })
+
+    // cancel attachement
+    $('.attachement_cancel-btn').on('click', function() {
+        messageResetForm();
     })
 
 });
