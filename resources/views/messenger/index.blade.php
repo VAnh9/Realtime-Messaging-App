@@ -1,7 +1,7 @@
 @extends('messenger.layouts.master')
 @section('content')
 
-<section class="wsus__chat_app">
+<section class="wsus__chat_app show_info">
 
     @include('messenger.layouts.user-list-sidebar')
 

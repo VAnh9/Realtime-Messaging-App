@@ -26,6 +26,7 @@ function enableChatboxOverlay() {
 
 function disableChatboxOverlay() {
     $('.wsus__message_paceholder').addClass('d-none');
+    $('.wsus__message_paceholder_blank').addClass('d-none');
 }
 
 function imagePreview(input, selector) {
