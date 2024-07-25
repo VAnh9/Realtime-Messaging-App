@@ -141,6 +141,8 @@ function IDinfo(id) {
             enableChatboxOverlay();
         },
         success: function(response) {
+            // fetch messages
+            fetchMessages(response.user.id);
             $('.messenger-header').find('img').attr('src', response.user.avatar);
             $('.messenger-header').find('h4').text(response.user.name);
 
@@ -234,6 +236,32 @@ function sendTempMsgCard(message, tempId, attachement = false) {
 
 }
 
+/**
+ * --------------------------------
+ * Fetch Message From db
+ * --------------------------------
+ */
+let messagePage = 1;
+let noMoreMessages = false;
+let msgLoading = false;
+function fetchMessages(id) {
+
+    $.ajax({
+        method: 'GET',
+        url: 'messenger/fetch-messages',
+        data: {
+            _token: csrf_token,
+            id: id,
+            page: messagePage
+        },
+        success: function(response) {
+            msgBoxContainer.html(response.messages);
+        },
+        error: function(err) {
+            console.log(err);
+        }
+    })
+}
 
 /**
  * --------------------------------

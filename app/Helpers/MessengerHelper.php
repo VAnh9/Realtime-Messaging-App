@@ -7,7 +7,6 @@ if (!function_exists('timeAgo')) {
         $seconds = $timeDiff;
         $minutes = round($timeDiff / 60);
         $hours = round($timeDiff / 3600);
-        $days = round($timeDiff / 86400);
 
         if($seconds <= 60) {
             if($seconds <= 1) {
@@ -19,7 +18,7 @@ if (!function_exists('timeAgo')) {
         } else if ($hours <= 24) {
             return $hours.'h ago';
         } else {
-            return date('j M y', strtotime($days));
+            return date('j M y', strtotime($time));
         }
     }
 }

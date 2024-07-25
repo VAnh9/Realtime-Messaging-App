@@ -754,6 +754,16 @@ button {
     color: var(--colorWhite);
 }
 
+.wsus__single_chat .messages.left {
+    background: #6e6e6e;
+    display: inline-block;
+    padding: 5px 20px;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--colorWhite);
+}
+
 .wsus__single_chat .time {
     display: block;
     font-size: 14px;
