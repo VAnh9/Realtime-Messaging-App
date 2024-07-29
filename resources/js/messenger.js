@@ -127,6 +127,18 @@ function actionOnScroll(selector, callback, topScroll = false) {
 
 /**
  * --------------------------------
+ * Slide to bottom on action
+ * --------------------------------
+ */
+function scrollToBottom(container) {
+    container.stop().animate({
+        scrollTop: container[0].scrollHeight
+    })
+}
+
+
+/**
+ * --------------------------------
  * Fetch id data of user and update view
  * --------------------------------
  */
@@ -191,6 +203,7 @@ function sendMessage() {
                 } else {
                     msgBoxContainer.append(sendTempMsgCard(inputValue, tempId));
                 }
+                scrollToBottom(msgBoxContainer);
                 messageResetForm();
             },
             success: function(response) {
@@ -256,6 +269,7 @@ function fetchMessages(id) {
         },
         success: function(response) {
             msgBoxContainer.html(response.messages);
+            scrollToBottom(msgBoxContainer);
         },
         error: function(err) {
             console.log(err);
