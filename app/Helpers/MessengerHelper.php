@@ -4,21 +4,20 @@
 if (!function_exists('timeAgo')) {
     function timeAgo($time) {
         $timeDiff = time() - strtotime($time);
-        $seconds = $timeDiff;
-        $minutes = round($timeDiff / 60);
-        $hours = round($timeDiff / 3600);
 
-        if($seconds <= 60) {
-            if($seconds <= 1) {
-                return 'a seconds ago';
-            }
-            return $seconds.'s ago';
-        } else if ($minutes <= 60) {
-            return $minutes.'m ago';
-        } else if ($hours <= 24) {
-            return $hours.'h ago';
+        if ($timeDiff <= 60) {
+            $result = ($timeDiff <= 1) ? 'a second ago' : $timeDiff . 's ago';
+        } elseif ($timeDiff <= 3600) {
+            $minutes = round($timeDiff / 60);
+            $result = $minutes . 'm ago';
+        } elseif ($timeDiff <= 86400) {
+            $hours = round($timeDiff / 3600);
+            $result = $hours . 'h ago';
         } else {
-            return date('j M y', strtotime($time));
+            $result = date('j M y', strtotime($time));
         }
+
+        return $result;
     }
+
 }
