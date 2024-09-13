@@ -154,7 +154,7 @@ function IDinfo(id) {
         },
         success: function(response) {
             // fetch messages
-            fetchMessages(response.user.id);
+            fetchMessages(response.user.id, true);
             $('.messenger-header').find('img').attr('src', response.user.avatar);
             $('.messenger-header').find('h4').text(response.user.name);
 
@@ -257,24 +257,38 @@ function sendTempMsgCard(message, tempId, attachement = false) {
 let messagePage = 1;
 let noMoreMessages = false;
 let msgLoading = false;
-function fetchMessages(id) {
-
-    $.ajax({
-        method: 'GET',
-        url: 'messenger/fetch-messages',
-        data: {
-            _token: csrf_token,
-            id: id,
-            page: messagePage
-        },
-        success: function(response) {
-            msgBoxContainer.html(response.messages);
-            scrollToBottom(msgBoxContainer);
-        },
-        error: function(err) {
-            console.log(err);
-        }
-    })
+function fetchMessages(id, newFetch = false) {
+    if (newFetch) {
+        messagePage = 1;
+        noMoreMessages = false;
+    }
+    if (!noMoreMessages) {
+        $.ajax({
+            method: 'GET',
+            url: 'messenger/fetch-messages',
+            data: {
+                _token: csrf_token,
+                id: id,
+                page: messagePage
+            },
+            success: function(response) {
+                if (messagePage == 1) {
+                    msgBoxContainer.html(response.messages);
+                    scrollToBottom(msgBoxContainer);
+                } else {
+                    msgBoxContainer.prepend(response.messages);
+                }
+                // pagination lock and page increment
+                noMoreMessages = messagePage >= data?.lastPage;
+                if(!noMoreMessages) {
+                    messagePage++;
+                }
+            },
+            error: function(err) {
+                console.log(err);
+            }
+        })
+    }
 }
 
 /**
@@ -330,5 +344,10 @@ $(document).ready(function() {
     $('.attachement_cancel-btn').on('click', function() {
         messageResetForm();
     })
+
+    // message pagination
+    actionOnScroll(".wsus__chat_area_body", function() {
+        fetchMessages(getMessengerId());
+    }, true)
 
 });

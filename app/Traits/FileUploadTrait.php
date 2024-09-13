@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 trait FileUploadTrait {
 
-    function uploadFile(Request $request, string $inputName, ?string $oldPath = null, string $path = '/uploads') {
+    function uploadFile(Request $request, string $inputName, ?string $oldPath = null, string $path = '/uploads') { // NOSONAR
         if($request->hasFile($inputName)) {
 
             $file = $request->{$inputName};
