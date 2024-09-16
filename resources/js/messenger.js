@@ -276,10 +276,13 @@ function fetchMessages(id, newFetch = false) {
                     msgBoxContainer.html(response.messages);
                     scrollToBottom(msgBoxContainer);
                 } else {
+                    const lastMsg = msgBoxContainer.find('.message-card').first();
+                    const currentOffset = lastMsg.offset().top - msgBoxContainer.scrollTop();
                     msgBoxContainer.prepend(response.messages);
+                    msgBoxContainer.scrollTop(lastMsg.offset().top - currentOffset);
                 }
                 // pagination lock and page increment
-                noMoreMessages = messagePage >= data?.lastPage;
+                noMoreMessages = messagePage >= response?.lastPage;
                 if(!noMoreMessages) {
                     messagePage++;
                 }

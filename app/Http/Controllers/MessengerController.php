@@ -86,7 +86,7 @@ class MessengerController extends Controller
             ->latest()->paginate(20);
 
         $response = [
-            'lastPage' => $messages->lastPage(),
+            'lastPage' => $messages->lastPage(),    
             'messages' => '',
         ];
 
